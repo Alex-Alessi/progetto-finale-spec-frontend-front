@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
+import { Link } from "react-router-dom";
 
 export default function DevicesPage() {
   const [devices, setDevices] = useState([]);
@@ -99,7 +100,9 @@ export default function DevicesPage() {
           {sortMemo.map((d) => (
             <tr key={d.id}>
               <td>{d.id}</td>
-              <td>{d.title}</td>
+              <td>
+                <Link to={`/devices/${d.id}`}>{d.title}</Link>
+              </td>
               <td>{d.category}</td>
               <td>{new Date(d.createdAt).toLocaleDateString()}</td>
             </tr>
