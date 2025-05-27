@@ -66,27 +66,38 @@ export default function DevicesPage() {
 
   return (
     <div>
-      <div className="d-flex justify-content-start">
-        <input
-          placeholder="Cerca il dispositivo..."
-          className="mb-3 me-2"
-          onChange={(e) => setSearchQuery(e.target.value)}
-        ></input>
+      <div className="d-flex justify-content-between align-items-start flex-wrap">
+        <div className="d-flex">
+          <input
+            placeholder="Cerca il dispositivo..."
+            className="mb-3 me-2"
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
 
-        <Form.Select
-          style={{ width: "200px" }}
-          size="sm"
-          aria-label="Default select example"
-          className="mb-3"
-          onChange={(e) => setSelectedOption(e.target.value)}
+          <Form.Select
+            style={{ width: "200px" }}
+            size="sm"
+            aria-label="Default select example"
+            className="mb-3"
+            onChange={(e) => setSelectedOption(e.target.value)}
+          >
+            <option value="tutti">Tutti</option>
+            <option value="smartphone">Smartphone</option>
+            <option value="smartwatch">Smartwatch</option>
+            <option value="laptop">Laptop</option>
+            <option value="tablet">Tablet</option>
+          </Form.Select>
+        </div>
+
+        <Link
+          to="/compare"
+          state={{ devices }}
+          className="ms-2 mb-3 btn btn-primary btn-sm"
         >
-          <option value="tutti">Tutti</option>
-          <option value="smartphone">Smartphone</option>
-          <option value="smartwatch">Smartwatch</option>
-          <option value="laptop">Laptop</option>
-          <option value="tablet">Tablet</option>
-        </Form.Select>
+          Clicca per andare al comparatore
+        </Link>
       </div>
+
       <Table bordered hover>
         <thead>
           <tr>
