@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
 
 export default function DevicesPage() {
   const [devices, setDevices] = useState([]);
@@ -9,6 +13,10 @@ export default function DevicesPage() {
   const [selectedOption, setSelectedOption] = useState("tutti");
   const [sortBy, setSortBy] = useState("");
   const [sortOrder, setSortOrder] = useState(1);
+  const [favoriteList, setFavoriteList] = useState(() => {
+    const saved = localStorage.getItem("favorites");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   useEffect(() => {
     fetch(`http://localhost:3001/devices`)
@@ -16,6 +24,10 @@ export default function DevicesPage() {
       .then((data) => setDevices(data))
       .catch((error) => console.error(error));
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favoriteList)); //salva i preferiti e li trasforma in stringa
+  }, [favoriteList]);
 
   const sortMemo = useMemo(() => {
     const filteredList =
@@ -88,14 +100,23 @@ export default function DevicesPage() {
             <option value="tablet">Tablet</option>
           </Form.Select>
         </div>
+        <div>
+          <Link
+            to="/favorites"
+            state={{ favoriteList }}
+            className="ms-2 mb-3 btn btn-primary btn-sm"
+          >
+            Vai alla sezione Preferiti <FontAwesomeIcon icon={faStar} />
+          </Link>
 
-        <Link
-          to="/compare"
-          state={{ devices }}
-          className="ms-2 mb-3 btn btn-primary btn-sm"
-        >
-          Clicca per andare al comparatore
-        </Link>
+          <Link
+            to="/compare"
+            state={{ devices }}
+            className="ms-2 mb-3 btn btn-primary btn-sm"
+          >
+            Clicca per andare al comparatore
+          </Link>
+        </div>
       </div>
 
       <Table bordered hover>
@@ -116,6 +137,21 @@ export default function DevicesPage() {
               </td>
               <td>{d.category}</td>
               <td>{new Date(d.createdAt).toLocaleDateString()}</td>
+              <td>
+                <Button
+                  onClick={() => {
+                    setFavoriteList((prev) =>
+                      prev.includes(d.id)
+                        ? prev.filter((f) => f !== d.id)
+                        : [...prev, d.id]
+                    );
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={favoriteList.includes(d.id) ? faStar : faStarRegular}
+                  />
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>
