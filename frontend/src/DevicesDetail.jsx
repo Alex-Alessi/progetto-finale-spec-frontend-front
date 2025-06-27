@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Card from "react-bootstrap/Card";
+import Carousel from "react-bootstrap/Carousel";
 
 export default function DevicesDetail() {
   const { id } = useParams();
@@ -19,6 +20,31 @@ export default function DevicesDetail() {
     <Card>
       <Card.Body>
         <Card.Title>{device.title}</Card.Title>
+        {device.media && device.media.length > 0 && (
+          <Carousel
+            style={{
+              maxHeight: "500px",
+              overflow: "hidden",
+              background: "black",
+            }}
+          >
+            {device.media.map((file, index) => (
+              <Carousel.Item key={index}>
+                <img
+                  src={`/${file}`}
+                  alt={`media-${index}`}
+                  className="d-block mx-auto img-fluid"
+                  style={{
+                    maxHeight: "500px",
+                    objectFit: "contain",
+                    width: "100%",
+                  }}
+                />
+              </Carousel.Item>
+            ))}
+          </Carousel>
+        )}
+
         <ul>
           {Object.entries(device)
             .filter(([key]) => key !== "title")

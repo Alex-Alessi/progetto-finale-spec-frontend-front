@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -18,6 +18,16 @@ export default function DevicesPage() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  function debounce(callback, delay) {
+    let timer;
+    return (value) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        callback(value);
+      }, delay);
+    };
+  }
+
   useEffect(() => {
     fetch(`http://localhost:3001/devices`)
       .then((res) => res.json())
@@ -28,6 +38,13 @@ export default function DevicesPage() {
   useEffect(() => {
     localStorage.setItem("favorites", JSON.stringify(favoriteList)); //salva i preferiti e li trasforma in stringa
   }, [favoriteList]);
+
+  const debouncedSearch = useCallback(
+    debounce((value) => {
+      setSearchQuery(value);
+    }, 1000),
+    []
+  );
 
   const sortMemo = useMemo(() => {
     const filteredList =
@@ -83,7 +100,7 @@ export default function DevicesPage() {
           <input
             placeholder="Cerca il dispositivo..."
             className="mb-3 me-2"
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => debouncedSearch(e.target.value)}
           />
 
           <Form.Select
