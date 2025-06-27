@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import Card from "react-bootstrap/Card";
 import Carousel from "react-bootstrap/Carousel";
+import Button from "react-bootstrap/Button";
+import Offcanvas from "react-bootstrap/Offcanvas";
 
 export default function DevicesDetail() {
   const { id } = useParams();
   const [device, setDevice] = useState({});
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     fetch(`http://localhost:3001/devices/${id}`)
@@ -16,10 +18,13 @@ export default function DevicesDetail() {
 
   console.log(device);
 
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
-    <Card>
-      <Card.Body>
-        <Card.Title>{device.title}</Card.Title>
+    <>
+      <div className={show ? "blur-background" : ""}>
+        <h1>{device.title}</h1>
         {device.media && device.media.length > 0 && (
           <Carousel
             style={{
@@ -27,6 +32,7 @@ export default function DevicesDetail() {
               overflow: "hidden",
               background: "black",
             }}
+            className="my-4"
           >
             {device.media.map((file, index) => (
               <Carousel.Item key={index}>
@@ -45,19 +51,31 @@ export default function DevicesDetail() {
           </Carousel>
         )}
 
-        <ul>
-          {Object.entries(device)
-            .filter(([key]) => key !== "title")
-            .map(([key, value]) => (
-              <li key={key} className="d-flex justify-content-start">
-                <strong>{key}:</strong>
-                {["createdat", "updatedat"].includes(key.toLowerCase())
-                  ? new Date(value).toLocaleDateString("it-IT")
-                  : String(value)}
-              </li>
-            ))}
-        </ul>
-      </Card.Body>
-    </Card>
+        <Button variant="primary" onClick={handleShow}>
+          Specifiche
+        </Button>
+      </div>
+      <Offcanvas show={show} onHide={handleClose} placement="start">
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>Specifiche Tecniche</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          <ul>
+            {Object.entries(device)
+              .filter(
+                ([key]) => key !== "title" && key !== "media" && key !== "id"
+              )
+              .map(([key, value]) => (
+                <li key={key}>
+                  <strong>{key}: </strong>
+                  {["createdat", "updatedat"].includes(key.toLowerCase())
+                    ? new Date(value).toLocaleDateString("it-IT")
+                    : String(value)}
+                </li>
+              ))}
+          </ul>
+        </Offcanvas.Body>
+      </Offcanvas>
+    </>
   );
 }
