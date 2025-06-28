@@ -28,6 +28,13 @@ export default function DevicesPage() {
     };
   }
 
+  function foundCategory(category) {
+    if (category === "smartphone") return "badge text-bg-info";
+    else if (category === "laptop") return "badge text-bg-warning";
+    else if (category === "tablet") return "badge text-black text-bg-success";
+    else return "badge text-black text-bg-primary";
+  }
+
   useEffect(() => {
     fetch(`http://localhost:3001/devices`)
       .then((res) => res.json())
@@ -117,29 +124,11 @@ export default function DevicesPage() {
             <option value="tablet">Tablet</option>
           </Form.Select>
         </div>
-        <div>
-          <Link
-            to="/favorites"
-            state={{ favoriteList }}
-            className="ms-2 mb-3 btn btn-primary btn-sm"
-          >
-            Vai alla sezione Preferiti <FontAwesomeIcon icon={faStar} />
-          </Link>
-
-          <Link
-            to="/compare"
-            state={{ devices }}
-            className="ms-2 mb-3 btn btn-primary btn-sm"
-          >
-            Clicca per andare al comparatore
-          </Link>
-        </div>
       </div>
 
       <Table bordered hover>
         <thead>
           <tr>
-            <th>Id</th>
             <th onClick={() => handleSort("title")}>Title</th>
             <th onClick={() => handleSort("category")}>Category</th>
             <th>createdAt</th>
@@ -148,11 +137,12 @@ export default function DevicesPage() {
         <tbody>
           {sortMemo.map((d) => (
             <tr key={d.id}>
-              <td>{d.id}</td>
               <td>
                 <Link to={`/devices/${d.id}`}>{d.title}</Link>
               </td>
-              <td>{d.category}</td>
+              <td>
+                <p className={foundCategory(d.category)}>{d.category}</p>
+              </td>
               <td>{new Date(d.createdAt).toLocaleDateString()}</td>
               <td>
                 <Button

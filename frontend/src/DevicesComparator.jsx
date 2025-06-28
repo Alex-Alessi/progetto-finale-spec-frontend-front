@@ -1,37 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { useLocation } from "react-router-dom";
 import Table from "react-bootstrap/Table";
 
 export default function DevicesComparator() {
-  const location = useLocation();
-  const { devices } = location.state;
+  const [devices, setDevices] = useState([]);
   const [idDevice1, setIdDevice1] = useState("");
   const [idDevice2, setIdDevice2] = useState("");
   const [device1, setDevice1] = useState({});
   const [device2, setDevice2] = useState({});
 
+  useEffect(() => {
+    fetch(`http://localhost:3001/devices`)
+      .then((res) => res.json())
+      .then((data) => setDevices(data))
+      .catch((error) => console.error(error));
+  }, []);
+
   function handleClick() {
     if (
-      idDevice1 !== "default" &&
-      idDevice2 !== "default" &&
-      idDevice1 !== idDevice2
+      idDevice1 === "default" ||
+      idDevice2 === "default" ||
+      !idDevice1 ||
+      !idDevice2 ||
+      idDevice1 === idDevice2
     ) {
-      const id1 = parseInt(idDevice1);
-      const id2 = parseInt(idDevice2);
-      fetch(`http://localhost:3001/devices/${id1}`)
-        .then((res) => res.json())
-        .then((data) => setDevice1(data.device))
-        .catch((error) => console.error(error));
-
-      fetch(`http://localhost:3001/devices/${id2}`)
-        .then((res) => res.json())
-        .then((data) => setDevice2(data.device))
-        .catch((error) => console.error(error));
-    } else {
       alert("Devi selezionare due dispositivi diversi");
+      return;
     }
+
+    const id1 = parseInt(idDevice1);
+    const id2 = parseInt(idDevice2);
+
+    fetch(`http://localhost:3001/devices/${id1}`)
+      .then((res) => res.json())
+      .then((data) => setDevice1(data.device))
+      .catch((error) => console.error(error));
+
+    fetch(`http://localhost:3001/devices/${id2}`)
+      .then((res) => res.json())
+      .then((data) => setDevice2(data.device))
+      .catch((error) => console.error(error));
   }
 
   function parametersList(dev1, dev2) {
@@ -83,7 +92,7 @@ export default function DevicesComparator() {
         </thead>
         <tbody>
           {parametersList(device1, device2)
-            .filter((p) => p !== "title" && p !== "id")
+            .filter((p) => p !== "title" && p !== "id" && p !== "media")
             .map((par) => (
               <tr key={par}>
                 <td>{par}</td>
