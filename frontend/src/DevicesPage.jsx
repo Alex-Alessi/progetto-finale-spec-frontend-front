@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Table from "react-bootstrap/Table";
-import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
+import { SlScreenSmartphone } from "react-icons/sl";
+import { MdComputer } from "react-icons/md";
+import { FaTabletAlt } from "react-icons/fa";
+import { BsSmartwatch } from "react-icons/bs";
 
 export default function DevicesPage() {
   const [devices, setDevices] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedOption, setSelectedOption] = useState("tutti");
+  const [selectedOption, setSelectedOption] = useState(null);
   const [sortBy, setSortBy] = useState("");
   const [sortOrder, setSortOrder] = useState(1);
   const [favoriteList, setFavoriteList] = useState(() => {
@@ -35,6 +38,10 @@ export default function DevicesPage() {
     else return "badge text-black text-bg-primary";
   }
 
+  function handleCategoryClick(category) {
+    setSelectedOption((prev) => (prev === category ? null : category));
+  }
+
   useEffect(() => {
     fetch(`http://localhost:3001/devices`)
       .then((res) => res.json())
@@ -49,21 +56,20 @@ export default function DevicesPage() {
   const debouncedSearch = useCallback(
     debounce((value) => {
       setSearchQuery(value);
-    }, 1000),
+    }, 300),
     []
   );
 
   const sortMemo = useMemo(() => {
-    const filteredList =
-      selectedOption === "tutti"
-        ? devices.filter((d) =>
+    const filteredList = !selectedOption
+      ? devices.filter((d) =>
+          d.title.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : devices
+          .filter((d) => d.category === selectedOption)
+          .filter((d) =>
             d.title.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        : devices
-            .filter((d) => d.category === selectedOption)
-            .filter((d) =>
-              d.title.toLowerCase().includes(searchQuery.toLowerCase())
-            );
+          );
 
     const devicesToSort = [...filteredList];
 
@@ -101,29 +107,54 @@ export default function DevicesPage() {
   }
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-start flex-wrap">
-        <div className="d-flex">
-          <input
-            placeholder="Cerca il dispositivo..."
-            className="mb-3 me-2"
-            onChange={(e) => debouncedSearch(e.target.value)}
-          />
+    <div className="mt-3 ">
+      <input
+        type="text"
+        placeholder="Cerca il dispositivo..."
+        className="form-control rounded-pill w-50 mb-3 mx-auto"
+        onChange={(e) => debouncedSearch(e.target.value)}
+        style={{ minWidth: "300px" }}
+      />
+      <div className="d-flex justify-content-center flex-wrap mb-4">
+        <Button
+          variant={
+            selectedOption === "smartphone" ? "primary" : "outline-secondary"
+          }
+          className="mx-4"
+          onClick={() => handleCategoryClick("smartphone")}
+        >
+          <SlScreenSmartphone /> Smartphone
+        </Button>
 
-          <Form.Select
-            style={{ width: "200px" }}
-            size="sm"
-            aria-label="Default select example"
-            className="mb-3"
-            onChange={(e) => setSelectedOption(e.target.value)}
-          >
-            <option value="tutti">Tutti</option>
-            <option value="smartphone">Smartphone</option>
-            <option value="smartwatch">Smartwatch</option>
-            <option value="laptop">Laptop</option>
-            <option value="tablet">Tablet</option>
-          </Form.Select>
-        </div>
+        <Button
+          variant={
+            selectedOption === "laptop" ? "primary" : "outline-secondary"
+          }
+          className="mx-4"
+          onClick={() => handleCategoryClick("laptop")}
+        >
+          <MdComputer /> Laptop
+        </Button>
+
+        <Button
+          variant={
+            selectedOption === "tablet" ? "primary" : "outline-secondary"
+          }
+          className="mx-4"
+          onClick={() => handleCategoryClick("tablet")}
+        >
+          <FaTabletAlt /> Tablet
+        </Button>
+
+        <Button
+          variant={
+            selectedOption === "smartwatch" ? "primary" : "outline-secondary"
+          }
+          className="mx-4"
+          onClick={() => handleCategoryClick("smartwatch")}
+        >
+          <BsSmartwatch /> Smartwatch
+        </Button>
       </div>
 
       <Table bordered hover>

@@ -4,10 +4,8 @@ import DevicesPage from "./DevicesPage";
 import DevicesDetail from "./DevicesDetail";
 import DevicesComparator from "./DevicesComparator";
 import FavoritesDevices from "./FavoritesDevices";
-import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
 
 function App() {
   return (
@@ -19,6 +17,7 @@ function App() {
             style={{
               maxHeight: "30px",
             }}
+            className="me-2"
           />
           Tech Shop
         </Navbar.Brand>
