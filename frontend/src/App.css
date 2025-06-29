@@ -47,3 +47,19 @@
   background-color: rgba(0, 0, 0, 0.3); /* opzionale */
   z-index: 1040; /* inferiore a Offcanvas */
 }
+
+.custom-select-transition {
+  width: 100px !important;
+  height: 40px;
+  border-radius: 50rem !important;
+  padding: 5px;
+  overflow: hidden;
+  transition: width 0.3s ease, border-radius 0.3s ease, text-indent 0.3s ease;
+  background-position: center;
+}
+
+.custom-select-transition.expanded {
+  width: 200px;
+  border-radius: 25px;
+  text-indent: 0;
+}

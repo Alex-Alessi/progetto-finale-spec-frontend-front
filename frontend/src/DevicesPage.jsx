@@ -9,6 +9,7 @@ import { SlScreenSmartphone } from "react-icons/sl";
 import { MdComputer } from "react-icons/md";
 import { FaTabletAlt } from "react-icons/fa";
 import { BsSmartwatch } from "react-icons/bs";
+import Form from "react-bootstrap/Form";
 
 export default function DevicesPage() {
   const [devices, setDevices] = useState([]);
@@ -20,6 +21,8 @@ export default function DevicesPage() {
     const saved = localStorage.getItem("favorites");
     return saved ? JSON.parse(saved) : [];
   });
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [selectFormat, setSelectFormat] = useState("griglia");
 
   function debounce(callback, delay) {
     let timer;
@@ -45,7 +48,10 @@ export default function DevicesPage() {
   useEffect(() => {
     fetch(`http://localhost:3001/devices`)
       .then((res) => res.json())
-      .then((data) => setDevices(data))
+      .then((data) => {
+        console.log("Dati caricati dal server:", data); // <-- debug
+        setDevices(data);
+      })
       .catch((error) => console.error(error));
   }, []);
 
@@ -108,13 +114,29 @@ export default function DevicesPage() {
 
   return (
     <div className="mt-3 ">
-      <input
-        type="text"
-        placeholder="Cerca il dispositivo..."
-        className="form-control rounded-pill w-50 mb-3 mx-auto"
-        onChange={(e) => debouncedSearch(e.target.value)}
-        style={{ minWidth: "300px" }}
-      />
+      <div className="d-flex">
+        <input
+          type="text"
+          placeholder="Cerca il dispositivo..."
+          className="form-control rounded-pill w-50 mb-3 mx-auto"
+          onChange={(e) => debouncedSearch(e.target.value)}
+          style={{ minWidth: "300px" }}
+        />
+
+        <Form.Select
+          aria-label="Categoria"
+          className={`custom-select-transition ${isExpanded ? "expanded" : ""}`}
+          onFocus={() => setIsExpanded(true)}
+          onBlur={() => setIsExpanded(false)}
+          defaultValue=""
+          onChange={(e) => {
+            setSelectFormat(e.target.value);
+          }}
+        >
+          <option value="griglia">Griglia</option>
+          <option value="lista">Lista</option>
+        </Form.Select>
+      </div>
       <div className="d-flex justify-content-center flex-wrap mb-4">
         <Button
           variant={
@@ -157,43 +179,108 @@ export default function DevicesPage() {
         </Button>
       </div>
 
-      <Table bordered hover>
-        <thead>
-          <tr>
-            <th onClick={() => handleSort("title")}>Title</th>
-            <th onClick={() => handleSort("category")}>Category</th>
-            <th>createdAt</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortMemo.map((d) => (
-            <tr key={d.id}>
-              <td>
-                <Link to={`/devices/${d.id}`}>{d.title}</Link>
-              </td>
-              <td>
-                <p className={foundCategory(d.category)}>{d.category}</p>
-              </td>
-              <td>{new Date(d.createdAt).toLocaleDateString()}</td>
-              <td>
-                <Button
-                  onClick={() => {
-                    setFavoriteList((prev) =>
-                      prev.includes(d.id)
-                        ? prev.filter((f) => f !== d.id)
-                        : [...prev, d.id]
-                    );
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={favoriteList.includes(d.id) ? faStar : faStarRegular}
-                  />
-                </Button>
-              </td>
+      {selectFormat === "griglia" ? (
+        <div className="container">
+          <div className="row">
+            {sortMemo.map((d) => {
+              const imgSrc =
+                d.media && Array.isArray(d.media) && d.media.length > 1
+                  ? `/${d.media[1]}`
+                  : null;
+              return (
+                <div key={d.id} className="col-sm-6 col-md-4 col-lg-3 mb-4">
+                  <div className="card h-100 shadow-sm">
+                    <div className="card-body d-flex flex-column justify-content-between">
+                      <div>
+                        <h5 className="card-title text-center">{d.title}</h5>
+
+                        {imgSrc && (
+                          <img
+                            src={imgSrc}
+                            alt={d.title}
+                            className="d-block mx-auto img-fluid mb-3"
+                            style={{
+                              maxHeight: "200px",
+                              objectFit: "contain",
+                              width: "100%",
+                            }}
+                          />
+                        )}
+
+                        <p className="card-text text-center">
+                          <span className={foundCategory(d.category)}>
+                            {d.category}
+                          </span>
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <Button
+                          variant="outline-primary"
+                          onClick={() => {
+                            setFavoriteList((prev) =>
+                              prev.includes(d.id)
+                                ? prev.filter((f) => f !== d.id)
+                                : [...prev, d.id]
+                            );
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            icon={
+                              favoriteList.includes(d.id)
+                                ? faStar
+                                : faStarRegular
+                            }
+                          />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <Table bordered hover>
+          <thead>
+            <tr>
+              <th onClick={() => handleSort("title")}>Title</th>
+              <th onClick={() => handleSort("category")}>Category</th>
+              <th>createdAt</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {sortMemo.map((d) => (
+              <tr key={d.id}>
+                <td>
+                  <Link to={`/devices/${d.id}`}>{d.title}</Link>
+                </td>
+                <td>
+                  <p className={foundCategory(d.category)}>{d.category}</p>
+                </td>
+                <td>{new Date(d.createdAt).toLocaleDateString()}</td>
+                <td>
+                  <Button
+                    onClick={() => {
+                      setFavoriteList((prev) =>
+                        prev.includes(d.id)
+                          ? prev.filter((f) => f !== d.id)
+                          : [...prev, d.id]
+                      );
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      icon={
+                        favoriteList.includes(d.id) ? faStar : faStarRegular
+                      }
+                    />
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
     </div>
   );
 }
