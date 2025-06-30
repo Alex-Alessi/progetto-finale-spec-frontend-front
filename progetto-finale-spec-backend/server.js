@@ -223,12 +223,10 @@ const loadPromises = resourceTypes.map((type) => {
     const itemId = parseInt(req.params.id);
     const item = cache[type].find((p) => p.id === itemId);
     if (!item) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `${type} with id '${itemId}' not found.`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `${type} with id '${itemId}' not found.`,
+      });
     }
     res.json({ success: true, [type]: item });
   });
@@ -238,12 +236,10 @@ const loadPromises = resourceTypes.map((type) => {
     const itemId = parseInt(req.params.id);
     const itemIndex = cache[type].findIndex((p) => p.id === itemId);
     if (itemIndex === -1) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `${type} with id '${itemId}' not found.`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `${type} with id '${itemId}' not found.`,
+      });
     }
     const oldItem = cache[type][itemIndex];
 
@@ -306,12 +302,10 @@ const loadPromises = resourceTypes.map((type) => {
     const itemId = parseInt(req.params.id);
     const itemIndex = cache[type].findIndex((p) => p.id === itemId);
     if (itemIndex === -1) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `${type} with id '${itemId}' not found.`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `${type} with id '${itemId}' not found.`,
+      });
     }
 
     const existingItem = cache[type][itemIndex];
@@ -360,12 +354,10 @@ const loadPromises = resourceTypes.map((type) => {
     const itemId = parseInt(req.params.id);
     const filteredItems = cache[type].filter((p) => p.id !== itemId);
     if (filteredItems.length === cache[type].length) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `${type} with id '${itemId}' not found.`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `${type} with id '${itemId}' not found.`,
+      });
     }
 
     cache[type] = filteredItems;
@@ -396,13 +388,27 @@ const loadPromises = resourceTypes.map((type) => {
     }
 
     res.json(
-      filteredItems.map(({ id, createdAt, updatedAt, title, category }) => ({
-        id,
-        createdAt,
-        updatedAt,
-        title,
-        category,
-      }))
+      filteredItems.map(
+        ({
+          id,
+          createdAt,
+          updatedAt,
+          title,
+          category,
+          media,
+          os,
+          storage,
+        }) => ({
+          id,
+          createdAt,
+          updatedAt,
+          title,
+          category,
+          media,
+          os,
+          storage,
+        })
+      )
     );
   });
 

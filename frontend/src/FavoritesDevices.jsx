@@ -3,8 +3,8 @@ import Table from "react-bootstrap/Table";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
-import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
 
 export default function FavoritesDevices() {
   const [devices, setDevices] = useState([]);
@@ -62,8 +62,11 @@ export default function FavoritesDevices() {
                     >
                       <FontAwesomeIcon
                         icon={
-                          favoriteList.includes(d.id) ? faStar : faStarRegular
+                          favoriteList.includes(d.id)
+                            ? solidHeart
+                            : regularHeart
                         }
+                        style={{ color: "#ff0000" }}
                       />
                     </Button>
                   </td>

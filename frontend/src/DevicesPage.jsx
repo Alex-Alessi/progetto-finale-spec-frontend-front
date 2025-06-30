@@ -3,8 +3,10 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
-import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
+import { faAndroid } from "@fortawesome/free-brands-svg-icons";
+import { faApple } from "@fortawesome/free-brands-svg-icons";
 import { SlScreenSmartphone } from "react-icons/sl";
 import { MdComputer } from "react-icons/md";
 import { FaTabletAlt } from "react-icons/fa";
@@ -43,6 +45,19 @@ export default function DevicesPage() {
 
   function handleCategoryClick(category) {
     setSelectedOption((prev) => (prev === category ? null : category));
+  }
+
+  function iconOs(os) {
+    if (os.toLowerCase() === "android") {
+      return <FontAwesomeIcon icon={faAndroid} style={{ color: "#78c258" }} />;
+    } else if (
+      os.toLowerCase() === "ios" ||
+      os.toLowerCase() === "macos" ||
+      os.toLowerCase() === "watchos" ||
+      os.toLowerCase() === "ipados"
+    ) {
+      return <FontAwesomeIcon icon={faApple} style={{ color: "#000000" }} />;
+    }
   }
 
   useEffect(() => {
@@ -192,28 +207,11 @@ export default function DevicesPage() {
                   <div className="card h-100 shadow-sm">
                     <div className="card-body d-flex flex-column justify-content-between">
                       <div>
-                        <h5 className="card-title text-center">{d.title}</h5>
-
-                        {imgSrc && (
-                          <img
-                            src={imgSrc}
-                            alt={d.title}
-                            className="d-block mx-auto img-fluid mb-3"
-                            style={{
-                              maxHeight: "200px",
-                              objectFit: "contain",
-                              width: "100%",
-                            }}
-                          />
-                        )}
-
-                        <p className="card-text text-center">
+                        <p className="card-text position-absolute top-0 start-0 m-2">
                           <span className={foundCategory(d.category)}>
                             {d.category}
                           </span>
                         </p>
-                      </div>
-                      <div className="text-center">
                         <Button
                           variant="outline-primary"
                           onClick={() => {
@@ -223,15 +221,48 @@ export default function DevicesPage() {
                                 : [...prev, d.id]
                             );
                           }}
+                          className="btn-sm position-absolute top-0 end-0 m-2"
                         >
                           <FontAwesomeIcon
                             icon={
                               favoriteList.includes(d.id)
-                                ? faStar
-                                : faStarRegular
+                                ? solidHeart
+                                : regularHeart
                             }
+                            style={{ color: "#ff0000" }}
                           />
                         </Button>
+                        <h5 className="card-title text-center">
+                          <Link
+                            to={`/devices/${d.id}`}
+                            className="custom-link d-flex align-items-start justify-content-center"
+                            style={{ whiteSpace: "nowrap" }}
+                          >
+                            {d.title}
+                          </Link>
+                        </h5>
+
+                        {imgSrc && (
+                          <img
+                            src={imgSrc}
+                            alt={d.title}
+                            className="d-block mx-auto img-fluid mb-3"
+                            style={{
+                              width: "200px",
+                              height: "150px",
+                              objectFit: "cover",
+                              marginTop: "10px",
+                            }}
+                          />
+                        )}
+                        <p>
+                          {iconOs(d.os)}
+                          {d.os}
+                        </p>
+                        <p>
+                          <b>Storage: </b>
+                          {d.storage}GB
+                        </p>
                       </div>
                     </div>
                   </div>
