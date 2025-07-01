@@ -52,6 +52,7 @@ export default function FavoritesDevices() {
                   <td>{new Date(d.createdAt).toLocaleDateString()}</td>
                   <td>
                     <Button
+                      variant="outline-secondary"
                       onClick={() => {
                         setFavoriteList((prev) =>
                           prev.includes(d.id)

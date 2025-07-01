@@ -398,6 +398,7 @@ const loadPromises = resourceTypes.map((type) => {
           media,
           os,
           storage,
+          price,
         }) => ({
           id,
           createdAt,
@@ -407,6 +408,7 @@ const loadPromises = resourceTypes.map((type) => {
           media,
           os,
           storage,
+          price,
         })
       )
     );

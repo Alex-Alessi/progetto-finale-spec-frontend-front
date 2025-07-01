@@ -51,65 +51,94 @@ export default function DevicesComparator() {
   }
 
   return (
-    <div>
-      <h2 className="mb-4">Scegli i due dispositivi da comparare</h2>
-      <div className="d-flex justify-content-around">
-        <Form.Select
-          style={{ width: "300px" }}
-          aria-label="Default select example"
-          onChange={(e) => setIdDevice1(e.target.value)}
-        >
-          <option value="default">Seleziona il dispositivo</option>
-          {devices.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.title}
-            </option>
-          ))}
-        </Form.Select>
-        <Form.Select
-          style={{ width: "300px" }}
-          aria-label="Default select example"
-          onChange={(e) => setIdDevice2(e.target.value)}
-        >
-          <option value="default">Seleziona il dispositivo</option>
-          {devices.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.title}
-            </option>
-          ))}
-        </Form.Select>
-      </div>
-      <Button className="mt-3" onClick={handleClick}>
-        Avvia il confronto
-      </Button>
-      <Table bordered hover className="mt-3">
-        <thead>
-          <tr>
-            <th>Parametri</th>
-            <th>{device1.title}</th>
-            <th>{device2.title}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {parametersList(device1, device2)
-            .filter((p) => p !== "title" && p !== "id" && p !== "media")
-            .map((par) => (
-              <tr key={par}>
-                <td>{par}</td>
-                <td>
-                  {Object.keys(device1).includes(par)
-                    ? String(device1[par])
-                    : ""}
-                </td>
-                <td>
-                  {Object.keys(device2).includes(par)
-                    ? String(device2[par])
-                    : ""}
-                </td>
-              </tr>
+    <div className="bg-wrapper">
+      {/* Sfondo sinistro */}
+      {device1.media && (
+        <div
+          className="bg-half bg-left"
+          style={{
+            backgroundImage: `url(${device1.media[1]})`,
+          }}
+        />
+      )}
+
+      {/* Sfondo destro */}
+      {device2.media && (
+        <div
+          className="bg-half bg-right"
+          style={{
+            backgroundImage: `url(${device2.media[1]})`,
+          }}
+        />
+      )}
+
+      {/* Contenuto visibile sopra lo sfondo */}
+      <div className="content-overlay">
+        <h2 className="mb-4">Scegli i due dispositivi da comparare</h2>
+
+        <div className="d-flex justify-content-around mb-3">
+          <Form.Select
+            style={{ width: "300px" }}
+            onChange={(e) => setIdDevice1(e.target.value)}
+          >
+            <option value="default">Seleziona il dispositivo</option>
+            {devices.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.title}
+              </option>
             ))}
-        </tbody>
-      </Table>
+          </Form.Select>
+
+          <Form.Select
+            style={{ width: "300px" }}
+            onChange={(e) => setIdDevice2(e.target.value)}
+          >
+            <option value="default">Seleziona il dispositivo</option>
+            {devices.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.title}
+              </option>
+            ))}
+          </Form.Select>
+        </div>
+
+        <Button className="mb-3" onClick={handleClick}>
+          Avvia il confronto
+        </Button>
+
+        <Table bordered hover className="mt-3">
+          <thead>
+            <tr>
+              <th>Parametri</th>
+              <th>{device1.title}</th>
+              <th>{device2.title}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {parametersList(device1, device2)
+              .filter((p) => p !== "title" && p !== "id" && p !== "media")
+              .map((par) => (
+                <tr key={par}>
+                  <td>{par}</td>
+                  <td>
+                    {par === "price"
+                      ? "€ " + String(device1[par])
+                      : Object.keys(device1).includes(par)
+                      ? String(device1[par])
+                      : ""}
+                  </td>
+                  <td>
+                    {par === "price"
+                      ? "€ " + String(device2[par])
+                      : Object.keys(device2).includes(par)
+                      ? String(device2[par])
+                      : ""}
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 }

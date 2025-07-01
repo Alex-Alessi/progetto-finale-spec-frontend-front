@@ -7,10 +7,12 @@ import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
 import { faAndroid } from "@fortawesome/free-brands-svg-icons";
 import { faApple } from "@fortawesome/free-brands-svg-icons";
+import { faWindows } from "@fortawesome/free-brands-svg-icons";
 import { SlScreenSmartphone } from "react-icons/sl";
 import { MdComputer } from "react-icons/md";
 import { FaTabletAlt } from "react-icons/fa";
 import { BsSmartwatch } from "react-icons/bs";
+import { SiGarmin } from "react-icons/si";
 import Form from "react-bootstrap/Form";
 
 export default function DevicesPage() {
@@ -48,15 +50,37 @@ export default function DevicesPage() {
   }
 
   function iconOs(os) {
-    if (os.toLowerCase() === "android") {
-      return <FontAwesomeIcon icon={faAndroid} style={{ color: "#78c258" }} />;
+    if (os.toLowerCase().includes("android")) {
+      return (
+        <FontAwesomeIcon
+          icon={faAndroid}
+          style={{ color: "#78c258" }}
+          className="me-1"
+        />
+      );
     } else if (
-      os.toLowerCase() === "ios" ||
-      os.toLowerCase() === "macos" ||
-      os.toLowerCase() === "watchos" ||
-      os.toLowerCase() === "ipados"
+      os.toLowerCase().includes("ios") ||
+      os.toLowerCase().includes("macos") ||
+      os.toLowerCase().includes("watchos") ||
+      os.toLowerCase().includes("ipados")
     ) {
-      return <FontAwesomeIcon icon={faApple} style={{ color: "#000000" }} />;
+      return (
+        <FontAwesomeIcon
+          icon={faApple}
+          style={{ color: "#000000" }}
+          className="me-1"
+        />
+      );
+    } else if (os.toLowerCase().includes("windows")) {
+      return (
+        <FontAwesomeIcon
+          icon={faWindows}
+          style={{ color: "#005eff" }}
+          className="me-1"
+        />
+      );
+    } else if (os.toLowerCase().includes("garmin")) {
+      return <SiGarmin className="me-1" />;
     }
   }
 
@@ -155,9 +179,9 @@ export default function DevicesPage() {
       <div className="d-flex justify-content-center flex-wrap mb-4">
         <Button
           variant={
-            selectedOption === "smartphone" ? "primary" : "outline-secondary"
+            selectedOption === "smartphone" ? "info" : "outline-secondary"
           }
-          className="mx-4"
+          className="mx-4 category-button"
           onClick={() => handleCategoryClick("smartphone")}
         >
           <SlScreenSmartphone /> Smartphone
@@ -165,9 +189,9 @@ export default function DevicesPage() {
 
         <Button
           variant={
-            selectedOption === "laptop" ? "primary" : "outline-secondary"
+            selectedOption === "laptop" ? "warning" : "outline-secondary"
           }
-          className="mx-4"
+          className="mx-4 category-button"
           onClick={() => handleCategoryClick("laptop")}
         >
           <MdComputer /> Laptop
@@ -175,9 +199,9 @@ export default function DevicesPage() {
 
         <Button
           variant={
-            selectedOption === "tablet" ? "primary" : "outline-secondary"
+            selectedOption === "tablet" ? "success" : "outline-secondary"
           }
-          className="mx-4"
+          className="mx-4 category-button"
           onClick={() => handleCategoryClick("tablet")}
         >
           <FaTabletAlt /> Tablet
@@ -187,7 +211,7 @@ export default function DevicesPage() {
           variant={
             selectedOption === "smartwatch" ? "primary" : "outline-secondary"
           }
-          className="mx-4"
+          className="mx-4 category-button"
           onClick={() => handleCategoryClick("smartwatch")}
         >
           <BsSmartwatch /> Smartwatch
@@ -213,7 +237,7 @@ export default function DevicesPage() {
                           </span>
                         </p>
                         <Button
-                          variant="outline-primary"
+                          variant="outline-secondary"
                           onClick={() => {
                             setFavoriteList((prev) =>
                               prev.includes(d.id)
@@ -232,13 +256,16 @@ export default function DevicesPage() {
                             style={{ color: "#ff0000" }}
                           />
                         </Button>
-                        <h5 className="card-title text-center">
+                        <h5
+                          className="card-title text-center"
+                          style={{ fontSize: "18px" }}
+                        >
                           <Link
                             to={`/devices/${d.id}`}
                             className="custom-link d-flex align-items-start justify-content-center"
                             style={{ whiteSpace: "nowrap" }}
                           >
-                            {d.title}
+                            {d.storage ? `${d.title} ${d.storage}GB` : d.title}
                           </Link>
                         </h5>
 
@@ -259,10 +286,22 @@ export default function DevicesPage() {
                           {iconOs(d.os)}
                           {d.os}
                         </p>
-                        <p>
-                          <b>Storage: </b>
-                          {d.storage}GB
-                        </p>
+                        <b>€ {d.price.toFixed(2).replace(".", ",")}</b>
+                        <div
+                          style={{
+                            whiteSpace: "nowrap",
+                            fontSize: "12px",
+                            borderRadius: "10px",
+                            width: "200px",
+                          }}
+                          className="bg-secondary-subtle text-secondary-emphasis mt-2"
+                        >
+                          oppure{" "}
+                          <strong>
+                            € {(d.price / 3).toFixed(2).replace(".", ",")}
+                          </strong>{" "}
+                          al mese in 3 rate
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -277,21 +316,34 @@ export default function DevicesPage() {
             <tr>
               <th onClick={() => handleSort("title")}>Title</th>
               <th onClick={() => handleSort("category")}>Category</th>
-              <th>createdAt</th>
+              <th>Operating System</th>
+              <th>Price</th>
             </tr>
           </thead>
           <tbody>
             {sortMemo.map((d) => (
               <tr key={d.id}>
                 <td>
-                  <Link to={`/devices/${d.id}`}>{d.title}</Link>
+                  <Link to={`/devices/${d.id}`} className="custom-link">
+                    {d.title}
+                  </Link>
                 </td>
                 <td>
                   <p className={foundCategory(d.category)}>{d.category}</p>
                 </td>
-                <td>{new Date(d.createdAt).toLocaleDateString()}</td>
+                <td>
+                  {" "}
+                  {iconOs(d.os)}
+                  {d.os}
+                </td>
+                <td>
+                  <strong>
+                    € {(d.price / 3).toFixed(2).replace(".", ",")}
+                  </strong>
+                </td>
                 <td>
                   <Button
+                    variant="outline-secondary"
                     onClick={() => {
                       setFavoriteList((prev) =>
                         prev.includes(d.id)
@@ -302,8 +354,9 @@ export default function DevicesPage() {
                   >
                     <FontAwesomeIcon
                       icon={
-                        favoriteList.includes(d.id) ? faStar : faStarRegular
+                        favoriteList.includes(d.id) ? solidHeart : regularHeart
                       }
+                      style={{ color: "#ff0000" }}
                     />
                   </Button>
                 </td>

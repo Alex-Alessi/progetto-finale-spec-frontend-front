@@ -71,3 +71,33 @@
 .custom-link:active {
   color: blue;
 }
+
+.bg-wrapper {
+  position: relative;
+}
+
+.bg-half {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center top;
+  opacity: 0.2;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-left {
+  left: 0;
+}
+
+.bg-right {
+  right: 0;
+}
+
+.content-overlay {
+  position: relative;
+  z-index: 1;
+}
