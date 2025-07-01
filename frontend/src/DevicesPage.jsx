@@ -27,6 +27,7 @@ export default function DevicesPage() {
   });
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectFormat, setSelectFormat] = useState("griglia");
+  const [isHover, setIsHover] = useState("");
 
   function debounce(callback, delay) {
     let timer;
@@ -88,7 +89,6 @@ export default function DevicesPage() {
     fetch(`http://localhost:3001/devices`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("Dati caricati dal server:", data); // <-- debug
         setDevices(data);
       })
       .catch((error) => console.error(error));
@@ -181,8 +181,13 @@ export default function DevicesPage() {
           variant={
             selectedOption === "smartphone" ? "info" : "outline-secondary"
           }
+          style={{
+            backgroundColor: isHover === "smartphone" ? "#0cb7d9" : "",
+          }}
           className="mx-4 category-button"
           onClick={() => handleCategoryClick("smartphone")}
+          onMouseEnter={() => setIsHover("smartphone")}
+          onMouseLeave={() => setIsHover("")}
         >
           <SlScreenSmartphone /> Smartphone
         </Button>
@@ -191,8 +196,11 @@ export default function DevicesPage() {
           variant={
             selectedOption === "laptop" ? "warning" : "outline-secondary"
           }
+          style={{ backgroundColor: isHover === "laptop" ? "#ffc107" : "" }}
           className="mx-4 category-button"
           onClick={() => handleCategoryClick("laptop")}
+          onMouseEnter={() => setIsHover("laptop")}
+          onMouseLeave={() => setIsHover("")}
         >
           <MdComputer /> Laptop
         </Button>
@@ -201,8 +209,14 @@ export default function DevicesPage() {
           variant={
             selectedOption === "tablet" ? "success" : "outline-secondary"
           }
+          style={{
+            backgroundColor: isHover === "tablet" ? "#198754" : "",
+            color: selectedOption === "tablet" ? "black" : "",
+          }}
           className="mx-4 category-button"
           onClick={() => handleCategoryClick("tablet")}
+          onMouseEnter={() => setIsHover("tablet")}
+          onMouseLeave={() => setIsHover("")}
         >
           <FaTabletAlt /> Tablet
         </Button>
@@ -211,8 +225,14 @@ export default function DevicesPage() {
           variant={
             selectedOption === "smartwatch" ? "primary" : "outline-secondary"
           }
+          style={{
+            backgroundColor: isHover === "smartwatch" ? "#0d6efd" : "",
+            color: selectedOption === "smartwatch" ? "black" : "",
+          }}
           className="mx-4 category-button"
           onClick={() => handleCategoryClick("smartwatch")}
+          onMouseEnter={() => setIsHover("smartwatch")}
+          onMouseLeave={() => setIsHover("")}
         >
           <BsSmartwatch /> Smartwatch
         </Button>
