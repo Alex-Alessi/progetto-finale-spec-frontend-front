@@ -195,10 +195,10 @@ export default function FavoritesDevices() {
         <Table bordered hover>
           <thead>
             <tr>
-              <th>Id</th>
               <th>Title</th>
               <th>Category</th>
-              <th>createdAt</th>
+              <th>Operating System</th>
+              <th>Price</th>
             </tr>
           </thead>
           <tbody>
@@ -206,14 +206,23 @@ export default function FavoritesDevices() {
               .filter((f) => favoriteList.includes(f.id))
               .map((d) => (
                 <tr key={d.id}>
-                  <td>{d.id}</td>
                   <td>
                     <Link to={`/devices/${d.id}`} className="text-dark">
                       {d.title}
                     </Link>
                   </td>
-                  <td>{d.category}</td>
-                  <td>{new Date(d.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    <p className={foundCategory(d.category)}>{d.category}</p>
+                  </td>
+                  <td>
+                    {iconOs(d.os)}
+                    {d.os}
+                  </td>
+                  <td>
+                    <strong>
+                      € {(d.price / 3).toFixed(2).replace(".", ",")}
+                    </strong>
+                  </td>
                   <td>
                     <Button
                       variant="outline-secondary"
