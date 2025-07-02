@@ -10,6 +10,7 @@ import { faAndroid } from "@fortawesome/free-brands-svg-icons";
 import { faApple } from "@fortawesome/free-brands-svg-icons";
 import { faWindows } from "@fortawesome/free-brands-svg-icons";
 import { SiGarmin } from "react-icons/si";
+import { useNavigate } from "react-router-dom";
 
 export default function FavoritesDevices() {
   const [devices, setDevices] = useState([]);
@@ -19,6 +20,8 @@ export default function FavoritesDevices() {
   });
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectFormat, setSelectFormat] = useState("griglia");
+  const navigate = useNavigate();
+  const [fullImg, setFullImg] = useState(null);
 
   useEffect(() => {
     fetch(`http://localhost:3001/devices`)
@@ -105,7 +108,11 @@ export default function FavoritesDevices() {
                     : null;
                 return (
                   <div key={d.id} className="col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div className="card h-100 shadow-sm">
+                    <div
+                      className="card h-100 "
+                      onClick={() => navigate(`/devices/${d.id}`)}
+                      style={{ cursor: "pointer" }}
+                    >
                       <div className="card-body d-flex flex-column justify-content-between">
                         <div>
                           <p className="card-text position-absolute top-0 start-0 m-2">
@@ -158,6 +165,11 @@ export default function FavoritesDevices() {
                                 height: "150px",
                                 objectFit: "cover",
                                 marginTop: "10px",
+                                cursor: "zoom-in",
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setFullImg(imgSrc);
                               }}
                             />
                           )}
@@ -248,6 +260,36 @@ export default function FavoritesDevices() {
               ))}
           </tbody>
         </Table>
+      )}
+      {fullImg && (
+        <div
+          onClick={() => setFullImg(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+            cursor: "zoom-out",
+          }}
+        >
+          <img
+            src={fullImg}
+            alt="Fullscreen"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: "90%",
+              maxHeight: "90%",
+              borderRadius: "10px",
+              boxShadow: "0 0 20px black",
+            }}
+          />
+        </div>
       )}
     </div>
   );

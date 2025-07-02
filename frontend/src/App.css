@@ -101,3 +101,12 @@
   position: relative;
   z-index: 1;
 }
+
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 7px 7px 10px grey;
+  transform: scale(1.05);
+}

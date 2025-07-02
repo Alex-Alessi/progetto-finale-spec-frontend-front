@@ -14,6 +14,7 @@ import { FaTabletAlt } from "react-icons/fa";
 import { BsSmartwatch } from "react-icons/bs";
 import { SiGarmin } from "react-icons/si";
 import Form from "react-bootstrap/Form";
+import { useNavigate } from "react-router-dom";
 
 export default function DevicesPage() {
   const [devices, setDevices] = useState([]);
@@ -28,6 +29,8 @@ export default function DevicesPage() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectFormat, setSelectFormat] = useState("griglia");
   const [isHover, setIsHover] = useState("");
+  const navigate = useNavigate();
+  const [fullImg, setFullImg] = useState(null);
 
   function debounce(callback, delay) {
     let timer;
@@ -248,7 +251,11 @@ export default function DevicesPage() {
                   : null;
               return (
                 <div key={d.id} className="col-sm-6 col-md-4 col-lg-3 mb-4">
-                  <div className="card h-100 shadow-sm">
+                  <div
+                    className="card h-100"
+                    onClick={() => navigate(`/devices/${d.id}`)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <div className="card-body d-flex flex-column justify-content-between">
                       <div>
                         <p className="card-text position-absolute top-0 start-0 m-2">
@@ -299,6 +306,11 @@ export default function DevicesPage() {
                               height: "150px",
                               objectFit: "cover",
                               marginTop: "10px",
+                              cursor: "zoom-in",
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setFullImg(imgSrc);
                             }}
                           />
                         )}
@@ -384,6 +396,36 @@ export default function DevicesPage() {
             ))}
           </tbody>
         </Table>
+      )}
+      {fullImg && (
+        <div
+          onClick={() => setFullImg(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+            cursor: "zoom-out",
+          }}
+        >
+          <img
+            src={fullImg}
+            alt="Fullscreen"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: "90%",
+              maxHeight: "90%",
+              borderRadius: "10px",
+              boxShadow: "0 0 20px black",
+            }}
+          />
+        </div>
       )}
     </div>
   );
