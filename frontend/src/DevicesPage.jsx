@@ -265,7 +265,8 @@ export default function DevicesPage() {
                         </p>
                         <Button
                           variant="outline-secondary"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation(); // evita il click sulla card
                             setFavoriteList((prev) =>
                               prev.includes(d.id)
                                 ? prev.filter((f) => f !== d.id)

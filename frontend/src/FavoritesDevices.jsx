@@ -79,7 +79,7 @@ export default function FavoritesDevices() {
   return (
     <div>
       <div className="d-flex mt-3">
-        <h1 className="w-50 mx-auto">Lista preferiti</h1>
+        <h1 className="w-50 mx-auto mb-4">Lista preferiti</h1>
         <Form.Select
           aria-label="Categoria"
           className={`custom-select-transition ${
@@ -122,7 +122,8 @@ export default function FavoritesDevices() {
                           </p>
                           <Button
                             variant="outline-secondary"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setFavoriteList((prev) =>
                                 prev.includes(d.id)
                                   ? prev.filter((f) => f !== d.id)

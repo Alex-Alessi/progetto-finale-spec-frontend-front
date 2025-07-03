@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
+import Badge from "react-bootstrap/Badge";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 
 export default function DevicesComparator() {
   const [devices, setDevices] = useState([]);
@@ -52,7 +55,6 @@ export default function DevicesComparator() {
 
   return (
     <div className="bg-wrapper">
-      {/* Sfondo sinistro */}
       {device1.media && (
         <div
           className="bg-half bg-left"
@@ -62,7 +64,6 @@ export default function DevicesComparator() {
         />
       )}
 
-      {/* Sfondo destro */}
       {device2.media && (
         <div
           className="bg-half bg-right"
@@ -72,7 +73,6 @@ export default function DevicesComparator() {
         />
       )}
 
-      {/* Contenuto visibile sopra lo sfondo */}
       <div className="content-overlay">
         <h2 className="mb-4">Scegli i due dispositivi da comparare</h2>
 
@@ -105,6 +105,20 @@ export default function DevicesComparator() {
         <Button className="mb-3" onClick={handleClick}>
           Avvia il confronto
         </Button>
+        <div>
+          {device1.category !== device2.category ? (
+            <Badge bg="" className="badgeComparator p-2 ">
+              <FontAwesomeIcon
+                icon={faTriangleExclamation}
+                style={{ color: "#FFD43B" }}
+                className="me-2"
+              />
+              Stai facendo un confronto tra categorie diverse
+            </Badge>
+          ) : (
+            ""
+          )}
+        </div>
 
         <Table bordered hover className="mt-3">
           <thead>
@@ -121,15 +135,15 @@ export default function DevicesComparator() {
                 <tr key={par}>
                   <td>{par}</td>
                   <td>
-                    {par === "price"
-                      ? "€ " + String(device1[par])
+                    {par === "price" && typeof device1[par] === "number"
+                      ? "€ " + String(device1[par].toFixed(2).replace(".", ","))
                       : Object.keys(device1).includes(par)
                       ? String(device1[par])
                       : ""}
                   </td>
                   <td>
-                    {par === "price"
-                      ? "€ " + String(device2[par])
+                    {par === "price" && typeof device2[par] === "number"
+                      ? "€ " + String(device2[par].toFixed(2).replace(".", ","))
                       : Object.keys(device2).includes(par)
                       ? String(device2[par])
                       : ""}
