@@ -370,9 +370,7 @@ export default function DevicesPage() {
                   {d.os}
                 </td>
                 <td>
-                  <strong>
-                    € {(d.price / 3).toFixed(2).replace(".", ",")}
-                  </strong>
+                  <strong>€ {d.price.toFixed(2).replace(".", ",")}</strong>
                 </td>
                 <td>
                   <Button
